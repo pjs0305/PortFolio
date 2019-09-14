@@ -1,0 +1,428 @@
+#pragma once
+
+////////////////////////////////////////
+#define ON_NETWORKING
+
+#define MAX_NUM_OBJECT 3000
+#define MAX_NAME_LENGTH 10
+#define MAX_ROOM_NAME_LENGTH 20
+
+//#define SERVERIP	"119.64.25.5" // ±è´ëÈÆ
+//#define SERVERIP	"121.169.212.228" // ¹ÚÁø¼ö
+#define SERVERIP	"127.0.0.1"
+#define SERVERPORT	9000
+#define LOBBYSERVERIP	"127.0.0.1"
+#define LOBBYSERVERPORT	9001
+////////////////////////////////////////
+
+typedef enum PKT_ID
+{
+	PKT_ID_PLAYER_INFO,
+	PKT_ID_PLAYER_LIFE,
+	PKT_ID_CREATE_OBJECT,
+	PKT_ID_DELETE_OBJECT,
+	PKT_ID_TIME_INFO,
+	PKT_ID_SEND_COMPLETE,
+	PKT_ID_UPDATE_OBJECT,
+	PKT_ID_CREATE_EFFECT,
+	PKT_ID_GAME_STATE,
+	PKT_ID_PLAYER_IN,
+	PKT_ID_PLAYER_OUT,
+	PKT_ID_LOBBY_PLAYER_INFO,
+	PKT_ID_LOAD_COMPLETE,
+	PKT_ID_LOAD_COMPLETE_ALL,
+	PKT_ID_GAME_START,
+	PKT_ID_SHOOT,
+	PKT_ID_SCORE,
+	PKT_ID_GAME_END,
+	PKT_ID_PICK_ITEM,
+	PKT_ID_CREATE_ROOM,
+	PKT_ID_CREATE_ROOM_OK,
+	PKT_ID_ROOM_IN,
+	PKT_ID_ROOM_IN_OK,
+	PKT_ID_LEAVE_ROOM,
+	PKT_ID_CHANGE_MAP,
+	PKT_ID_ADD_ROOM,
+	PKT_ID_DELETE_ROOM,
+	PKT_ID_CHANGE_ROOM_INFO,
+	PKT_ID_MAP_EVENT,
+	PKT_ID_MOVE_TEAM,
+	PKT_ID_PLAYER_DIE,
+	PKT_ID_CHANGE_NAME,
+	PKT_ID_PLAYER_RESPAWN,
+	PKT_ID_MOVE_TO_MAIN_LOBBY
+}PKT_ID;
+
+typedef enum OBJECT_TYPE
+{
+	OBJECT_TYPE_PLAYER,
+	OBJECT_TYPE_MACHINE_BULLET,
+	OBJECT_TYPE_OBSTACLE,
+	OBJECT_TYPE_ITEM_HEALING,
+	OBJECT_TYPE_BZK_BULLET,
+	OBJECT_TYPE_BEAM_BULLET,
+	OBJECT_TYPE_ITEM_AMMO,
+	OBJECT_TYPE_METEOR,
+	OBJECT_TYPE_ITEM_AMMO_1,
+	OBJECT_TYPE_ITEM_AMMO_2,
+	OBJECT_TYPE_SABER
+}OBJECT_TYPE;
+
+typedef enum ROBOT_TYPE
+{
+	ROBOT_TYPE_GM,
+	ROBOT_TYPE_GUNDAM
+}ROBOT_TYPE;
+
+enum GAME_STATE
+{
+	GAME_STATE_GAME_START,
+	GAME_STATE_GAME_OVER,
+	GAME_STATE_LOAD_COMPLETE
+};
+typedef enum EFFECT_TYPE
+{
+	EFFECT_TYPE_HIT_FONT,
+	EFFECT_TYPE_EXPLOSION,
+	EFFECT_TYPE_HIT,
+	EFFECT_TYPE_GM_GUN,
+	EFFECT_TYPE_BEAM_RIFLE,
+	EFFECT_TYPE_BEAM_SNIPER,
+	EFFECT_TYPE_BEAM_HIT
+}EFFECT_TYPE;
+
+enum EFFECT_ANIMATION_TYPE
+{
+	EFFECT_ANIMATION_TYPE_ONE,
+	EFFECT_ANIMATION_TYPE_LOOP
+};
+enum WEAPON_TYPE
+{
+	WEAPON_TYPE_MACHINE_GUN,
+	WEAPON_TYPE_BAZOOKA,
+	WEAPON_TYPE_BEAM_RIFLE,
+	WEAPON_TYPE_GM_GUN,
+	WEAPON_TYPE_SABER,
+	WEAPON_TYPE_TOMAHAWK,
+	WEAPON_TYPE_BEAM_SNIPER
+};
+
+enum ANIMATION_TYPE
+{
+	ANIMATION_TYPE_IDLE,
+	ANIMATION_TYPE_WALK_FORWARD,
+	ANIMATION_TYPE_WALK_RIGHT,
+	ANIMATION_TYPE_WALK_LEFT,
+	ANIMATION_TYPE_WALK_BAKCWARD,
+	ANIMATION_TYPE_JUMP,
+	ANIMATION_TYPE_LANDING,
+	ANIMATION_TYPE_DASH_FORWARD,
+	ANIMATION_TYPE_DASH_LEFT,
+	ANIMATION_TYPE_DASH_RIGHT,
+	ANIMATION_TYPE_DASH_BACKWARD,
+	ANIMATION_TYPE_GM_GUN_SHOOT_START,
+	ANIMATION_TYPE_SHOOT_ONCE,
+	ANIMATION_TYPE_GM_GUN_SHOOT_RETURN,
+	ANIMATION_TYPE_JUMP_LOOP,
+	ANIMATION_TYPE_DASH_FORWARD_LOOP,
+	ANIMATION_TYPE_DASH_LEFT_LOOP,
+	ANIMATION_TYPE_DASH_RIGHT_LOOP,
+	ANIMATION_TYPE_DASH_BACKWARD_LOOP,
+	ANIMATION_TYPE_BEAM_SABER_1_ONE,
+	ANIMATION_TYPE_BEAM_SABER_2_ONE,
+	ANIMATION_TYPE_BEAM_SABER_3_ONE,
+	ANIMATION_TYPE_DASH_SHOOT_START_ONE,
+	ANIMATION_TYPE_SHOOT_DASH_ONE,
+	ANIMATION_TYPE_DASH_SHOOT_RETURN_ONE
+};
+
+enum BULLET_TYPE
+{
+	BULLET_TYPE_MACHINE_GUN,
+	BULLET_TYPE_BAZOOKA,
+	BULLET_TYPE_BEAM_RIFLE
+};
+
+enum ITEM_TYPE
+{
+	ITEM_TYPE_HEALING,
+	ITEM_TYPE_AMMO,
+	ITEM_TYPE_AMMO1,
+	ITEM_TYPE_AMMO2
+
+};
+
+enum MAP_EVENT_TYPE
+{
+	MAP_EVENT_TYPE_START,
+	MAP_EVENT_TYPE_END,
+	MAP_EVENT_TYPE_ALERT
+};
+
+enum TEAM_TYPE
+{
+	TEAM_TYPE_RED,
+	TEAM_TYPE_BLUE
+};
+
+#pragma pack(push, 1)
+
+/////////////////////////////////////////////////////////// Packet
+/////////////////////////////////////////////// Main Lobby
+struct PKT_CHANGE_ROOM_INFO
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE Room_num;
+	BYTE map;
+	BYTE numpeople;
+};
+
+struct PKT_ROOM_DELETE
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE Room_num;
+};
+
+struct PKT_ROOM_IN
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE Room_num;
+};
+
+struct PKT_ROOM_IN_OK
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE index;
+	BYTE map;
+	BYTE slot;
+};
+
+struct PKT_CREATE_ROOM
+{
+	BYTE PktSize;
+	BYTE PktId;
+	wchar_t name[MAX_ROOM_NAME_LENGTH];
+};
+
+struct PKT_CREATE_ROOM_OK
+{
+	BYTE PktSize;
+	BYTE PktId;
+};
+
+struct PKT_ADD_ROOM
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE Room_num;
+	wchar_t name[MAX_ROOM_NAME_LENGTH];
+};
+
+struct PKT_CHANGE_NAME
+{
+	BYTE PktSize;
+	BYTE PktId;
+	wchar_t name[MAX_NAME_LENGTH];
+};
+
+/////////////////////////////////////////////// Room
+struct PKT_LEAVE_ROOM
+{
+	BYTE PktSize;
+	BYTE PktId;
+};
+
+struct PKT_CHANGE_MAP
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE map;
+};
+
+struct PKT_MOVE_TEAM
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE team;
+};
+
+typedef struct PKT_PLAYER_IN
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	int			id;
+	BYTE		Team;
+	int			robot;
+	BYTE		slot;
+	wchar_t		name[MAX_NAME_LENGTH];
+}PKT_PLAYER_IN, PKT_PLAYER_OUT;
+
+struct PKT_LOBBY_PLAYER_INFO
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	int			id;
+	BYTE		selected_robot;
+	BYTE		Team;
+	BYTE		slot;
+};
+
+typedef struct PKT_GAME_START
+{
+	BYTE PktSize;
+	BYTE PktID;
+	BYTE map;
+}PKT_GAME_START, PKT_LOAD_COMPLETE, PKT_SEND_COMPLETE;
+
+/////////////////////////////////////////////// Battle
+typedef struct PKT_PLAYER_INFO
+{
+	BYTE			PktSize;
+	BYTE			PktId;
+	BYTE			ID;
+	XMFLOAT4X4		WorldMatrix;
+	WEAPON_TYPE		Player_Weapon;
+	BOOL			isChangeWeapon;
+	ANIMATION_TYPE	Player_Up_Animation;
+	BOOL			isUpChangeAnimation;
+	float			UpAnimationPosition;
+	ANIMATION_TYPE	Player_Down_Animation;
+	BOOL			isDownChangeAnimation;
+	float			DownAnimationPosition;
+	int				State;
+}PKT_PLAYER_INFO;
+
+typedef struct PKT_PLAYER_LIFE
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	BYTE		ID;
+	DWORD		HP;
+	DWORD		AMMO;
+}PKT_PLAYER_LIFE;
+
+typedef struct PKT_PICK_ITEM
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	BYTE		ID;
+	BYTE		Item_type;
+	DWORD		HP;
+	DWORD		AMMO;
+}PKT_PLAYER_PICK_AMMO;
+
+typedef struct PKT_CREATE_OBJECT
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	OBJECT_TYPE	Object_Type;
+	XMFLOAT4X4	WorldMatrix;
+	int			Object_Index;
+	ROBOT_TYPE	Robot_Type;
+}PKT_CREATE_OBJECT;
+
+typedef struct PKT_DELETE_OBJECT
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	int			Object_Index;
+}PKT_DELETE_OBJECT;
+
+struct PKT_TIME_INFO
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	float		elapsedtime;
+};
+
+struct PKT_UPDATE_OBJECT
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	int			Object_Index;
+	XMFLOAT3	Object_Position;
+};
+
+struct PKT_CREATE_EFFECT
+{
+	BYTE					PktSize;
+	BYTE					PktId;
+	XMFLOAT3				xmf3Position;
+	EFFECT_TYPE				efType;
+	EFFECT_ANIMATION_TYPE	EftAnitType;
+	float					fDistance;
+	XMFLOAT3				xmf3Look;
+	int id;
+};
+
+struct PKT_SHOOT
+{
+	BYTE			PktSize;
+	BYTE			PktId;
+	BYTE			ID;
+	WEAPON_TYPE		Player_Weapon;
+	XMFLOAT4X4		BulletWorldMatrix;
+};
+
+struct PKT_SCORE
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE RedScore;
+	BYTE BlueScore;
+};
+
+struct PKT_GAME_END
+{
+	BYTE PktSize;
+	BYTE PktId;
+	BYTE WinTeam;
+};
+
+struct PKT_MAP_EVENT
+{
+	BYTE PktSize;
+	BYTE PktId;
+	MAP_EVENT_TYPE type;
+	float gravity;
+};
+
+struct PKT_GAME_STATE
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	GAME_STATE	game_state;
+	BYTE		num_player;
+};
+
+struct PKT_PLAYER_DIE
+{
+	BYTE PktSize;
+	BYTE PktId;
+	int id;
+	float respawntime;
+};
+
+struct PKT_PLAYER_RESPAWN
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+	int			id;
+	XMFLOAT3	point;
+	int			hp;
+	char		team;
+};
+
+struct PKT_MOVE_TO_MAIN_LOBBY
+{
+	BYTE		PktSize;
+	BYTE		PktId;
+};
+
+///////////////////////////////////////////////////////////
+
+#pragma pack(pop)
